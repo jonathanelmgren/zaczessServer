@@ -8,13 +8,60 @@ const createProduct = async (request, response) => {
 		categories: request.body.categories,
 		tags: request.body.tags,
 		price: request.body.price,
-		variation: request.body.variation,
-		image: request.file.path
+		variations: request.body.variations,
+		salePrice: request.body.salePrice,
+		amountOfTimesOrdered: request.body.amountOfTimesOrdered
 	});
 
 	try {
 		const databaseResponse = await product.save();
 		response.status(StatusCode.OK).send(databaseResponse);
+	} catch (error) {
+		response.status(StatusCode.INTERNAL_SERVER_ERROR).send({ message: error.message });
+	}
+};
+
+const createVariation = async (request, response) => {
+	const product = {
+		$push: {
+			variations: request.body.variations
+		}
+	}
+	try {
+		const databaseResponse = await ProductModel.findByIdAndUpdate(request.params.productId, product, { useFindAndModify: false, new: true});
+		response.status(StatusCode.OK).send(databaseResponse)
+	} catch (error) {
+		response.status(StatusCode.INTERNAL_SERVER_ERROR).send({ message: error.message });
+	}
+};
+
+//Change featured image
+const changeFtdImg = async (request, response) => {
+	const img = checkIfImgIsPassed(request)
+	try {
+		const databaseResponse = await ProductModel.findByIdAndUpdate(request.params.productId, img, { useFindAndModify: false, new: true });
+		response.status(StatusCode.OK).send(databaseResponse)
+	} catch (error) {
+		response.status(StatusCode.INTERNAL_SERVER_ERROR).send({ message: error.message });
+	}
+};
+
+//Change additional images
+const changeMltImg = async (request, response) => {
+
+	let images = []
+	request.files.forEach((value) => {
+		images.push(value.path)
+	});
+
+	const img = {
+		$push: {
+			additionalImages: images
+		}
+	}
+	try {
+		const databaseResponse = await ProductModel.findByIdAndUpdate(request.params.productId, img, { useFindAndModify: false, new: true, upsert: true });
+		response.status(StatusCode.OK).send(databaseResponse)
 	} catch (error) {
 		response.status(StatusCode.INTERNAL_SERVER_ERROR).send({ message: error.message });
 	}
@@ -30,7 +77,25 @@ const fetchAllProducts = async (request, response) => {
 	}
 };
 
+//
+const checkIfImgIsPassed = (request) => {
+	let img
+	if (request.file !== undefined) {
+		img = {
+			featuredImage: request.file.path
+		}
+	} else {
+		img = {
+			featuredImage: 'src\\images\\featuredImages\\placeholder.png'
+		}
+	}
+	return img
+}
+
 export default {
 	createProduct,
 	fetchAllProducts,
+	changeFtdImg,
+	changeMltImg,
+	createVariation
 };

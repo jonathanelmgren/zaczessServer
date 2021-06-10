@@ -1,40 +1,25 @@
 import mongoose from 'mongoose'
-const {Schema} = mongoose
+const { Schema } = mongoose
 
 const productSchema = Schema({
-    title: {
-        type: String,
+    title: String,
+    categories: {
+        horse: [String],
+        rider: [String]
     },
-    categories:[{
-        type: String
+    tags: [String],
+    price: Number,
+    salePrice: Number,
+    amountOfTimesOrdered: Number,
+    variations : [{
+        size: String,
+        color: String,
+        seat: String,
+        stock: Number
     }],
-    tags: [{
-        type: String
-    }],
-    price: {
-        type: Number
-    },
-    variation: {
-        type: Boolean,
-        sizes: [{
-            type: String
-        }],
-        colors: {
-            type: String
-        },
-        seat: {
-            fullSeat: {
-                type: Boolean
-            },
-            halfSeat:{
-                type: Boolean
-            }
-        }
-    },
-    image: {
-        type: String,
-    }
-}, {timestamps: true})
+    featuredImage: String,
+    additionalImages: [String],
+}, { timestamps: true })
 
 const ProductModel = mongoose.model('product', productSchema)
 export default ProductModel
