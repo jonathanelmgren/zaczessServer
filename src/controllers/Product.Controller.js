@@ -46,6 +46,16 @@ const changeFtdImg = async (request, response) => {
 	}
 };
 
+//Get product by id
+const findProductByID = async (request, response) => {
+	try {
+		const databaseResponse = await ProductModel.findById(request.params.productId);
+		response.status(StatusCode.OK).send(databaseResponse)
+	} catch (error) {
+		response.status(StatusCode.INTERNAL_SERVER_ERROR).send({ message: error.message });
+	}
+};
+
 //Change additional images
 const changeMltImg = async (request, response) => {
 
@@ -97,5 +107,6 @@ export default {
 	fetchAllProducts,
 	changeFtdImg,
 	changeMltImg,
-	createVariation
+	createVariation,
+	findProductByID
 };

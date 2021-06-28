@@ -8,6 +8,7 @@ const routes = application => {
 	application.post('/product/:productId/variation', ProductController.createVariation)
 	application.put('/product/:productId/ftdimg', uploadSingle.single('featuredImage'), ProductController.changeFtdImg)
 	application.get('/products', ProductController.fetchAllProducts)
+	application.get('/product/:productId', ProductController.findProductByID)
 }
 
 export default {routes}
