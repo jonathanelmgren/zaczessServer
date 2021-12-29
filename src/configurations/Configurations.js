@@ -1,26 +1,28 @@
-import dotenv from 'dotenv'
-import mongoose from 'mongoose'
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
-dotenv.config()
+dotenv.config();
 
-const connectToPort = async application => {
+const isProd = process.env.PROD;
+
+const connectToPort = async (application) => {
 	try {
-		await application.listen(process.env.PORT, () => {
-			console.log(`✔️ Server igång på port ${process.env.PORT}`)
-		})
+		await application.listen(process.env.PORT || 3001, () => {
+			console.log(`✔️ Server igång på port ${process.env.PORT}`);
+		});
 	} catch (error) {
-		console.error('❌ ERROR OCCURED WHILE TRYING TO CONNECT TO THE PORT..')
+		console.error('❌ ERROR OCCURED WHILE TRYING TO CONNECT TO THE PORT..');
 	}
-}
+};
 
 const connectToDatabase = async () => {
 	try {
-		await mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true})
-		console.log(`✔️ SUCCESSFULLY CONNECTED TO DATABASE..`)
+		await mongoose.connect(isProd ? process.env.PROD_DATABASE_URL : process.env.DEV_DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
+		console.log(`✔️ SUCCESSFULLY CONNECTED TO DATABASE..`);
 	} catch (error) {
-		console.error('❌ ERROR OCCURD WHEN TRYING TO CONNECT TO DATABASE')
-		process.exit()
+		console.error('❌ ERROR OCCURD WHEN TRYING TO CONNECT TO DATABASE');
+		process.exit();
 	}
-}
+};
 
-export default {connectToPort, connectToDatabase}
+export default { connectToPort, connectToDatabase };
